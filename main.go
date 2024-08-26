@@ -1,17 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"io"
+	"html/template"
 	"log"
 	"net/http"
-	"os"
+
+	"github.com/Himanshu54/goblog/posts"
 )
 
 func main() {
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /home", NewHomePage("header", "footer", "content").Handler())
+	mux.HandleFunc("GET /posts/", posts.NewPostPage().Handler())
+	mux.HandleFunc("GET /posts/{slug}", posts.NewPostPage().SlugHandler())
 
-	mux.HandleFunc("GET /post/{slug}", PostHandler(FileReader{}))
+	dir := http.Dir("./static")
+	fs := http.FileServer(dir)
+	mux.Handle("GET /static/", http.StripPrefix("/static/", fs))
 
 	err := http.ListenAndServe(":3030", mux)
 	if err != nil {
@@ -19,34 +24,25 @@ func main() {
 	}
 }
 
-type SlugReader interface {
-	Read(slug string) (string, error)
+type HomePage struct {
+	Header  template.HTML
+	Footer  template.HTML
+	Content template.HTML
 }
 
-type FileReader struct{}
-
-func (fsr FileReader) Read(slug string) (string, error) {
-	f, err := os.Open(slug + ".md")
-	if err != nil {
-		return "", err
+func NewHomePage(header, footer, content string) *HomePage {
+	return &HomePage{
+		Header:  template.HTML(header),
+		Footer:  template.HTML(footer),
+		Content: template.HTML(content),
 	}
-	defer f.Close()
-	b, err := io.ReadAll(f)
-	if err != nil {
-		return "", nil
-	}
-	return string(b), nil
 }
 
-func PostHandler(sl SlugReader) http.HandlerFunc {
+func (hp *HomePage) Handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		slug := r.PathValue("slug")
-		postMarkdown, err := sl.Read(slug)
-		if err != nil {
-			// TODO:
-			http.Error(w, "Post Not Found", http.StatusNotFound)
-			return
+		tmpl := template.Must(template.ParseFiles("index.html"))
+		if err := tmpl.Execute(w, *hp); err != nil {
+			panic(err)
 		}
-		fmt.Fprint(w, postMarkdown)
 	}
 }
