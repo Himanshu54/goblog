@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -52,6 +53,10 @@ func NewPostPage() *PostPage {
 }
 
 func (pp *PostPage) Handler() http.HandlerFunc {
+	funcMap := template.FuncMap{
+		// The name "title" is what the function will be called in the template text.
+		"date": func(x time.Time) string { return x.Format(time.RFC822) },
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		postPage := PostPage{}
 		entries, err := os.ReadDir("posts/content/")
@@ -82,8 +87,15 @@ func (pp *PostPage) Handler() http.HandlerFunc {
 			http.Error(w, "no post to show", http.StatusNotFound)
 			return
 		}
-		postTemp := template.Must(template.ParseFiles("posts/postpage.html"))
-		postTemp.Execute(w, postPage)
+		postTemp, err := template.New(path.Base("posts/postpage.html")).Funcs(funcMap).ParseFiles("posts/postpage.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = postTemp.Execute(w, postPage)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 

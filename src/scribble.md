@@ -1,14 +1,3 @@
----
-title: "Turning neovim hardmode ON"
-date: 2023-08-05T16:02:11Z
-draft: false
-tags:
-    - nvim
-    - vim
-    - lua
-    - ".dotfile"
----
-
 In my quest to learn vim, I stumbled upon a very excellent advise to disable arrow keys and force yourself to use only h,j,k,l movements. Being a former counter-strike enthusiast I know that this method works as I have forced me to learn better keybinds earlier too.
 
 And since I am also looking into how to configure nvim properly whilest understanding what I put into my configurations, I decided not to blindly add [vim-hardmode](https://github.com/dusans/vim-hardmode) plugin.

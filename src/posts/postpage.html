@@ -1,20 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="http://localhost:8080/static/styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="http://localhost:8080/static/styles.css"
+    />
     <title>SlowbotWrites</title>
-</head>
-<body>
-<div id="navbar">
-    <ul>
+  </head>
+  <body>
+    <div id="navbar">
+      <ul>
         <li><a href="/home"> Home </a></li>
         <li><a href="/profile"> Profile </a></li>
         <li><a href="/posts"> Posts </a></li>
-        <li><a href="/resume"> Resume </a></li>
-    </ul>
-</div>
-{{range .Posts}} <div> <a href="{{ .PostFile }}" >{{ .Title }} {{ .Date }} {{ .Tags }} </a> </div> {{end}}
-</body>
+        <li><a href="/scribbles"> Scribbles </a></li>
+      </ul>
+    </div>
+    {{range .Posts}}
+    <div>
+      # {{ .Title }}<br />
+      {{ date .Date }}<br>
+      {{range .Tags }} #{{ . }}{{end}} <br />
+      <a href="{{ .PostFile }}"> read more... </a>
+    </div>
+    {{end}}
+  </body>
 </html>

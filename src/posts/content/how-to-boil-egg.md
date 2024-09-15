@@ -1,5 +1,5 @@
 ---
-title: "boil eggs"
+title: "How to boil eggs."
 tags: ["food", "recipie"]
 ---
 # How to boil eggs.

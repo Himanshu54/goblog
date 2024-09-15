@@ -1,0 +1,7 @@
+[user]
+name = Himanshu Gusain
+email = himu5493@gmail.com
+
+[core]
+sshCommand = ssh -i ~/.ssh/personal_github_rsa
+
